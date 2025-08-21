@@ -21,14 +21,39 @@ class FavoritesPage extends StatelessWidget {
           child: Text('You have '
               '${favorites.length} favorites:'),
         ),
-        for (var pair in favorites)
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(pair.asPascalCase),
-            trailing: IconButton(
-              icon: Icon(Icons.delete), 
-              onPressed: () => appState.removeFavorite(pair),
+        for (var i = 0; i < favorites.length; i += 2)
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  child: ListTile(
+                    leading: Icon(Icons.favorite),
+                    title: Text(favorites[i].asPascalCase),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => appState.removeFavorite(favorites[i]),
+                    ),
+                  ),
+                ),
               ),
+              Expanded(
+                child: i + 1 < favorites.length
+                    ? Container(
+                        margin: EdgeInsets.symmetric(horizontal: 4),
+                        child: ListTile(
+                          leading: Icon(Icons.favorite),
+                          title: Text(favorites[i + 1].asPascalCase),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () =>
+                                appState.removeFavorite(favorites[i + 1]),
+                          ),
+                        ),
+                      )
+                    : SizedBox(),
+              ),
+            ],
           ),
       ],
     );
