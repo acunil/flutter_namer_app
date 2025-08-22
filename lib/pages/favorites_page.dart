@@ -9,54 +9,59 @@ class FavoritesPage extends StatelessWidget {
     var favorites = appState.favorites;
 
     if (favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Text('No favorites yet.'),
+        ),
       );
     }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = constraints.maxWidth <= 510
+            ? 1
+            : constraints.maxWidth <= 800 ? 2 : 3;
 
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${favorites.length} favorites:'),
-        ),
-        for (var i = 0; i < favorites.length; i += 2)
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  child: ListTile(
-                    leading: Icon(Icons.favorite),
-                    title: Text(favorites[i].asPascalCase),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => appState.removeFavorite(favorites[i]),
+        return ListView(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                'Your favorites:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 1,
+                mainAxisSpacing: 1,
+                mainAxisExtent: 60
+              ),
+              itemCount: favorites.length,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemBuilder: (context, index) {
+                final favorite = favorites[index];
+                return Card(
+                  elevation: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),  // 5 top + 5 bottom = 10 vertical padding around content.
+                    child: ListTile(
+                      title: Text(favorite.asPascalCase),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => appState.removeFavorite(favorite),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Expanded(
-                child: i + 1 < favorites.length
-                    ? Container(
-                        margin: EdgeInsets.symmetric(horizontal: 4),
-                        child: ListTile(
-                          leading: Icon(Icons.favorite),
-                          title: Text(favorites[i + 1].asPascalCase),
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () =>
-                                appState.removeFavorite(favorites[i + 1]),
-                          ),
-                        ),
-                      )
-                    : SizedBox(),
-              ),
-            ],
-          ),
-      ],
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
-
 }
